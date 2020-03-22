@@ -25,28 +25,11 @@ def verify_token(token):
 
 
 # 请求必须携带 token 的校验装饰器
-""" def login_required(views_func):
-    @functools.wraps(views_func)
-    def verify_token(*args,**kwargs):
-        try:
-            token = request.headers["z-token"]
-        except Exception:
-            return {'msg': '缺少 token'}
-        
-        verify = verify_token(token)
-
-        if not verify:
-            return {'msg': '登录已过期'}
-            
-        return views_func(*args,**kwargs)
-
-    return verify_token """
-
 def token_required(request):
     def decorate(func):
         def token_handle(*args, **kwargs):
             try:
-                token = request.headers['z-token']
+                token = request.headers['Authorization']
             except Exception:
                 return {'msg': '缺少 token'}
             
@@ -54,7 +37,6 @@ def token_required(request):
 
             if not _:
                 return {'msg': '登录已过期'}
-
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         return token_handle
     return decorate
