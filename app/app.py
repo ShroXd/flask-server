@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app import auth
+from app import auth, user
 from app.settings import DevelopmentConfig
 
 
@@ -18,3 +18,4 @@ def register_blueprints(app):
     """Register Flask blueprints"""
 
     app.register_blueprint(auth.views.blueprint)
+    app.register_blueprint(user.views.blueprint)
