@@ -1,4 +1,4 @@
-from flask import (Blueprint, request, jsonify, session)
+from flask import (Blueprint, request)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import extensions
@@ -27,9 +27,9 @@ def register():
                 'username': username,
                 'password': generate_password_hash(password)
             })
-            return jsonify({'msg': '注册成功'})
+            return {'msg': '注册成功'}
         else:
-            return jsonify({'msg': msg})
+            return {'msg': msg}
 
 
 @blueprint.route('/login', methods=('POST', 'GET'))
