@@ -2,6 +2,7 @@ from flask import (Blueprint, request, jsonify, session)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import extensions
+from app import utils
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -46,9 +47,11 @@ def login():
             msg = '密码错误'
 
         if msg is None:
-            session.clear()
-            session['user_id'] = user['username']
-            return {'msg': '登录成功'}
+            # session.clear()
+            # session['user_id'] = user['username']
+            token = utils.create_token(user['username'])
+            # user = utils.verify_token(token)
+            return {'msg': '登录成功', 'token': token}
         else:
             return {'msg': msg}
 
