@@ -1,12 +1,12 @@
 from flask import (Blueprint, request, jsonify, session)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import db
+from app import db
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@bp.route('/register', methods=('GET', 'POST'))
+@blueprint.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
         username = request.form.get('username', None)
@@ -31,11 +31,11 @@ def register():
             return jsonify({'msg': msg})
 
 
-@bp.route('/login', methods=('POST', 'GET'))
+@blueprint.route('/login', methods=('POST', 'GET'))
 def login():
     if request.method == 'POST':
-        username = request.form.get('username', None)
-        password = request.form.get('password', None)
+        username = request.form.get('username')
+        password = request.form.get('password')
         user = db.get_db().users
         msg = None
         user = user.find_one({'username': username})
@@ -53,7 +53,7 @@ def login():
             return {'msg': msg}
 
 
-@bp.route('/logout')
+@blueprint.route('/logout')
 def logout():
     session.clear()
     return {'msg': '登出成功'}

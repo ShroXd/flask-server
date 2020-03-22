@@ -1,5 +1,0 @@
-# MONGODB CONFIG
-class MongoDB():
-    MONGO_HOST = '49.232.5.176'
-    MONGO_PORT = '34541'
-    MONGO_DBNAME = 'dev'
