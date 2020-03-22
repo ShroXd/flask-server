@@ -1,7 +1,7 @@
 from flask import (Blueprint, request, jsonify, session)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db
+from app import extensions
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -11,7 +11,7 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username', None)
         password = request.form.get('password', None)
-        user = db.get_db().users
+        user = extensions.get_db().users
         msg = None
 
         if not username:
@@ -36,7 +36,7 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        user = db.get_db().users
+        user = extensions.get_db().users
         msg = None
         user = user.find_one({'username': username})
 

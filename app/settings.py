@@ -9,3 +9,5 @@ class DevelopmentConfig(BaseConfig):
     ENV = 'dev'
     DEBUG = True
     SECRET_KEY = 'djskla'
+
+    MONGO_URI = 'mongodb://49.232.5.176:34541/dev'
