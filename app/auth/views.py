@@ -1,3 +1,5 @@
+import uuid
+
 from flask import (Blueprint, request)
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -25,7 +27,8 @@ def register():
         if msg is None:
             user.insert({
                 'username': username,
-                'password': generate_password_hash(password)
+                'password': generate_password_hash(password),
+                'userId': uuid.uuid1()
             })
             return {'msg': '注册成功'}
         else:
@@ -49,9 +52,10 @@ def login():
         if msg is None:
             # session.clear()
             # session['user_id'] = user['username']
-            token = utils.create_token(user['username'])
+            user_id = user['userId']
+            token = utils.create_token(user_id)
             # user = utils.verify_token(token)
-            return {'msg': '登录成功', 'token': token}
+            return {'msg': '登录成功', 'token': token, 'userId': user_id}
         else:
             return {'msg': msg}
 

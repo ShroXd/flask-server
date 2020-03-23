@@ -8,7 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 def create_token(request_user):
 
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=3600)
-    token = s.dumps({"username": request_user}).decode("ascii")
+    token = s.dumps({"userId": str(request_user)}).decode("ascii")
     return token
 
 
