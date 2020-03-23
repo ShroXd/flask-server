@@ -5,7 +5,7 @@ blueprint = Blueprint('user', __name__, url_prefix='/user')
 
 
 @blueprint.route('/info', methods=['GET'])
-@utils.token_required(request)
+@utils.token_required
 def info():
     if request.method == 'GET':
         token = request.headers['Authorization']
