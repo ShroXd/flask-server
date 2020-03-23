@@ -25,18 +25,34 @@ def verify_token(token):
 
 
 # 请求必须携带 token 的校验装饰器
-def token_required(request):
-    def decorate(func):
-        def token_handle(*args, **kwargs):
-            try:
-                token = request.headers['Authorization']
-            except Exception:
-                return {'msg': '缺少 token'}
-            
-            _ = verify_token(token)
+def token_required(func):
+    @functools.wraps(func)
+    def token_handle(*args, **kwargs):
+        try:
+            token = request.headers['Authorization']
+        except Exception:
+            return {'msg': '缺少 token'}
 
-            if not _:
-                return {'msg': '登录已过期'}
+        _ = verify_token(token)
+
+        if not _:
+            return {'msg': '登录已过期'}
+        return func(*args, **kwargs)
+
+    return token_handle
+
+
+# request 请求参数检查装饰器
+def params_check(params_list):
+    def decotate(func):
+        @functools.wraps(func)
+        def check(*args, **kwargs):
+            for _ in params_list:
+                if not request.values.get(str(_)):
+                    return {'status': 'err', 'msg': '缺少参数 {}'.format(str(_))}
+
             return func(*args, **kwargs)
-        return token_handle
-    return decorate
+
+        return check
+
+    return decotate
