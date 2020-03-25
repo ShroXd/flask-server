@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app import auth, user, novel
+from app import auth, user, novel, mark
 from app.settings import DevelopmentConfig
 
 
@@ -20,3 +20,4 @@ def register_blueprints(app):
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(novel.views.blueprint)
+    app.register_blueprint(mark.views.blueprint)
