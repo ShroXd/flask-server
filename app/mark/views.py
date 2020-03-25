@@ -69,10 +69,10 @@ def book_fetch():
         return {'msg': '暂无数据'}
 
 
-@blueprint.route('/reading/add', methods=['POST'])
+@blueprint.route('/reading/modify', methods=['POST'])
 @utils.token_required
 @utils.params_check(['userId', 'bookName', 'chapterId'])
-def reading_add():
+def reading_modify():
     user_id = request.values.get('userId')
     book_name = request.values.get('bookName')
     chapter_id = request.values.get('chapterId')
