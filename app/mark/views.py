@@ -10,9 +10,10 @@ blueprint = Blueprint('mark', __name__, url_prefix='/mark')
 
 @blueprint.route('/book/add', methods=['POST'])
 @utils.token_required
-@utils.params_check(['userId', 'bookName'])
+@utils.params_check(['bookName'])
 def book_add():
-    user_id = request.values.get('userId')
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = token_data['userId']
     book_name = request.values.get('bookName')
     collections = extensions.get_db().collections
     condition = {'userId': uuid.UUID(user_id)}
@@ -39,9 +40,10 @@ def book_add():
 
 @blueprint.route('/book/del', methods=['POST'])
 @utils.token_required
-@utils.params_check(['userId', 'bookName'])
+@utils.params_check(['bookName'])
 def book_del():
-    user_id = request.values.get('userId')
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = token_data['userId']
     book_name = request.values.get('bookName')
     collections = extensions.get_db().collections
     condition = {'userId': uuid.UUID(user_id)}
@@ -56,9 +58,9 @@ def book_del():
 
 @blueprint.route('/book/fetch', methods=['POST'])
 @utils.token_required
-@utils.params_check(['userId'])
 def book_fetch():
-    user_id = request.values.get('userId')
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = token_data['userId']
     collections = extensions.get_db().collections
     condition = {'userId': uuid.UUID(user_id)}
     result = collections.find_one(condition)
@@ -71,9 +73,10 @@ def book_fetch():
 
 @blueprint.route('/reading/modify', methods=['POST'])
 @utils.token_required
-@utils.params_check(['userId', 'bookName', 'chapterId'])
+@utils.params_check(['bookName', 'chapterId'])
 def reading_modify():
-    user_id = request.values.get('userId')
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = token_data['userId']
     book_name = request.values.get('bookName')
     chapter_id = request.values.get('chapterId')
     collections = extensions.get_db().mark
@@ -109,9 +112,9 @@ def reading_modify():
 
 @blueprint.route('/reading/fetch', methods=['POST'])
 @utils.token_required
-@utils.params_check(['userId'])
 def reading_fetch():
-    user_id = request.values.get('userId')
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = token_data['userId']
     collections = extensions.get_db().mark
     condition = {'userId': uuid.UUID(user_id)}
     result = collections.find_one(condition)
