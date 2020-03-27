@@ -2,12 +2,12 @@ import functools
 
 from flask import request, jsonify, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from app.settings import DevelopmentConfig
 
 
 # 生成 token
 def create_token(request_user):
-
-    s = Serializer(current_app.config["SECRET_KEY"], expires_in=36000)
+    s = Serializer(current_app.config["SECRET_KEY"], expires_in=DevelopmentConfig.TOKEN_EXPIRES)
     token = s.dumps({"userId": str(request_user)}).decode("ascii")
     return token
 

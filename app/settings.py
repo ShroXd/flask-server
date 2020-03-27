@@ -2,6 +2,7 @@ class BaseConfig(object):
     """Base configuration"""
 
     JSON_AS_ASCII = False
+    TOKEN_EXPIRES = 60 * 60 * 24 * 7
 
 class DevelopmentConfig(BaseConfig):
     """Production configuration"""

@@ -95,6 +95,8 @@ def reading_modify():
     else:
         theMark = list(
             filter(lambda n: n['bookName'] == book_name, result['bookMarks']))
+        # 如果存在该本书的收藏记录，则更新它
+        # 如果不存在，则创建
         try:
             theMark = theMark[0]
         except IndexError:
