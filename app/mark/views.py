@@ -65,8 +65,24 @@ def book_fetch():
     condition = {'userId': uuid.UUID(user_id)}
     result = collections.find_one(condition)
 
+    # 获取第一本书的图片
+    # TODO: 此处实现与前端页面的耦合严重，待修改
+    try:
+        firstBook = result['bookCollections'][0]
+    except IndexError:
+        return {'msg': '暂无数据'}
+    else:
+        books = extensions.get_db().books
+        condition = {'bookName': firstBook}
+        bookImg = books.find_one(condition)['imageUrl']
+
+        data = {
+            'bookCollections': result['bookCollections'],
+            'firstBookImg': bookImg
+        }
+
     if result:
-        return {'msg': '请求成功', 'data': result['bookCollections']}
+        return {'msg': '请求成功', 'data': data}
     else:
         return {'msg': '暂无数据'}
 
