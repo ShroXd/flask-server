@@ -9,7 +9,7 @@ from app import utils
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@blueprint.route('/register', methods=('GET', 'POST'))
+@blueprint.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
         username = request.form.get('username', None)
@@ -35,7 +35,7 @@ def register():
             return {'msg': msg}
 
 
-@blueprint.route('/login', methods=('POST', 'GET'))
+@blueprint.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')

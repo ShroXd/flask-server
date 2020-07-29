@@ -1,0 +1,4 @@
+gunicorn
+gevent
+Flask
+Flask-PyMongo
