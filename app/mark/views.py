@@ -74,11 +74,14 @@ def book_fetch():
     else:
         books = extensions.get_db().books
         condition = {'bookName': firstBook}
-        bookImg = books.find_one(condition)['imageUrl']
+        book = books.find_one(condition)
+        book_img = book['imageUrl']
+        book_des = book['bookSimpleDes']
 
         data = {
             'bookCollections': result['bookCollections'],
-            'firstBookImg': bookImg
+            'firstBookImg': book_img,
+            'firstBookDes': book_des
         }
 
     if result:
@@ -136,8 +139,26 @@ def reading_fetch():
     collections = extensions.get_db().mark
     condition = {'userId': uuid.UUID(user_id)}
     result = collections.find_one(condition)
+    book_name = result['bookMarks'][0]['bookName']
+
+    book_collections = extensions.get_db().books
+    book = book_collections.find({
+            'bookName': {
+                '$regex': book_name
+            }
+        }, {
+            '_id': False
+        })[0]
+    book_img = book['imageUrl']
+    book_des = book['bookSimpleDes']
+
+    data = {
+        'bookRecentReading': result['bookMarks'],
+        'firstRecordImg': book_img,
+        'firstRecordDes': book_des
+    }
 
     if result:
-        return {'msg': '请求成功', 'data': result['bookMarks']}
+        return {'msg': '请求成功', 'data':  data}
     else:
         return {'msg': '暂无数据'}
