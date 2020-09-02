@@ -1,7 +1,7 @@
 from flask import Flask
 
 from app import auth, user, novel, mark
-from app.settings import DevelopmentConfig
+from app.settings import DevelopmentConfig, TestConfig
 
 
 def create_app():
@@ -10,6 +10,16 @@ def create_app():
     app = Flask(__name__)
 
     app.config.from_object(DevelopmentConfig)
+    register_blueprints(app)
+
+    return app
+
+def create_test_app():
+    """An application factory"""
+
+    app = Flask(__name__)
+
+    app.config.from_object(TestConfig)
     register_blueprints(app)
 
     return app

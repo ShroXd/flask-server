@@ -10,7 +10,7 @@ blueprint = Blueprint('novel', __name__, url_prefix='/novel')
 
 
 @blueprint.route('/books', methods=['POST'])
-@utils.token_required
+# @utils.token_required
 @utils.params_check(['listPage', 'listLimit'])
 def books():
     book_name = str(request.values.get('bookName'))

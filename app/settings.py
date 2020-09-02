@@ -12,3 +12,13 @@ class DevelopmentConfig(BaseConfig):
     SECRET_KEY = 'djskla'
 
     MONGO_URI = 'mongodb://49.232.5.176:34541/dev'
+
+
+class TestConfig(BaseConfig):
+    """Production configuration"""
+
+    ENV = 'test'
+    DEBUG = True
+    SECRET_KEY = 'djskla'
+
+    MONGO_URI = 'mongodb://49.232.5.176:34541/dev'
