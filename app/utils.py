@@ -7,6 +7,8 @@ from app.settings import DevelopmentConfig
 # http code 对照表
 http_code = {
     "Created": 201,
+    "BadRequest": 400,
+    "Unauthorized": 401,
     "Forbidden": 403,
     "Not Acceptable": 406,
     "Conflict": 409
@@ -39,12 +41,12 @@ def token_required(func):
         try:
             token = request.headers['Authorization']
         except Exception:
-            return {'msg': '缺少 token'}
+            return {'message': '缺少 token'}, http_code['Unauthorized']
 
         _ = verify_token(token)
 
         if not _:
-            return {'msg': '登录已过期'}
+            return {'message': '登录已过期'}, http_code['Unauthorized']
         return func(*args, **kwargs)
 
     return token_handle
@@ -57,7 +59,7 @@ def params_check(params_list):
         def check(*args, **kwargs):
             for _ in params_list:
                 if not request.values.get(str(_)):
-                    return {'message': '缺少参数'.format(str(_))}, 400
+                    return {'message': '缺少参数'.format(str(_))}, http_code['BadRequest']
 
             return func(*args, **kwargs)
 
