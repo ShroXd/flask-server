@@ -6,6 +6,7 @@ from app.settings import DevelopmentConfig
 
 # http code 对照表
 http_code = {
+    "OK": 200,
     "Created": 201,
     "BadRequest": 400,
     "Unauthorized": 401,
