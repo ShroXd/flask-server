@@ -1,5 +1,9 @@
 gunicorn
 gevent
-Flask
+Flask~=1.1.2
 Flask-PyMongo
 flask-cors
+Werkzeug~=1.0.1
+pymongo~=3.10.1
+itsdangerous~=1.1.0
+pytest~=6.0.1
