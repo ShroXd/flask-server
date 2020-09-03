@@ -4,6 +4,14 @@ from flask import request, jsonify, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.settings import DevelopmentConfig
 
+# http code 对照表
+http_code = {
+    "Created": 201,
+    "Forbidden": 403,
+    "Not Acceptable": 406,
+    "Conflict": 409
+}
+
 
 # 生成 token
 def create_token(request_user):
