@@ -5,34 +5,27 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import extensions
 from app import utils
+from app import app
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @blueprint.route('/register', methods=['POST'])
+@utils.params_check(['username', 'password'])
 def register():
-    if request.method == 'POST':
-        username = request.form.get('username', None)
-        password = request.form.get('password', None)
-        user = extensions.get_db().users
-        msg = None
+    username = request.form.get('username', None)
+    password = request.form.get('password', None)
+    users = app.mongo.db.users
 
-        if not username:
-            msg = '请输入用户名'
-        elif not password:
-            msg = '请输入密码'
-        elif user.find_one({'username': username}) is not None:
-            msg = '用户 {} 已注册'.format(username)
+    if users.find_one({'username': username}) is not None:
+        return {'message': '该用户名已被注册'}, 409
 
-        if msg is None:
-            user.insert({
-                'username': username,
-                'password': generate_password_hash(password),
-                'userId': uuid.uuid1()
-            })
-            return {'msg': '注册成功'}
-        else:
-            return {'msg': msg}
+    users.insert_one({
+        'username': username,
+        'password': generate_password_hash(password),
+        'userId': uuid.uuid1()
+    })
+    return {'message': '注册成功'}
 
 
 @blueprint.route('/login', methods=['POST'])

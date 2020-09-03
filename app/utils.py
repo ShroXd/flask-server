@@ -49,7 +49,7 @@ def params_check(params_list):
         def check(*args, **kwargs):
             for _ in params_list:
                 if not request.values.get(str(_)):
-                    return {'status': 'err', 'msg': '缺少参数 {}'.format(str(_))}
+                    return {'message': '缺少参数'.format(str(_))}, 400
 
             return func(*args, **kwargs)
 

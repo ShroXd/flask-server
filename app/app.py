@@ -3,6 +3,10 @@ from flask import Flask
 from app import auth, user, novel, mark
 from app.settings import DevelopmentConfig, TestConfig
 
+from flask_pymongo import PyMongo
+
+mongo = PyMongo()
+
 
 def create_app():
     """An application factory"""
@@ -12,17 +16,23 @@ def create_app():
     app.config.from_object(DevelopmentConfig)
     register_blueprints(app)
 
+    mongo.init_app(app)
+
     return app
 
+
 def create_test_app():
-    """An application factory"""
+    """An test application factory"""
 
     app = Flask(__name__)
 
     app.config.from_object(TestConfig)
     register_blueprints(app)
 
+    mongo.init_app(app)
+
     return app
+
 
 def register_blueprints(app):
     """Register Flask blueprints"""
