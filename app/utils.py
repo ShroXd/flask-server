@@ -11,6 +11,7 @@ http_code = {
     "BadRequest": 400,
     "Unauthorized": 401,
     "Forbidden": 403,
+    "Not Found": 404,
     "Not Acceptable": 406,
     "Conflict": 409
 }
