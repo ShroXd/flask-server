@@ -32,9 +32,15 @@ def novels():
         '_id': False
     }).skip((list_page - 1) * list_limit).limit(list_limit)
 
-    num = math.floor(results.count() / list_limit)
+    count_of_result = collections.count_documents({
+        'bookName': {
+            '$regex': book_name
+        }
+    })
 
-    if results.count() == 0:
+    num = math.floor(count_of_result / list_limit)
+
+    if count_of_result == 0:
         return {
             "message": "书籍不存在"
         }, utils.http_code["Not Found"]
