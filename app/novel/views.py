@@ -22,9 +22,9 @@ def novels():
             "message": "参数错误"
         }, utils.http_code["BadRequest"]
 
-    books = app.mongo.db.books
+    collections = app.mongo.db.books
 
-    results = books.find({
+    results = collections.find({
         'bookName': {
             '$regex': book_name
         }
@@ -53,9 +53,9 @@ def novels():
 @utils.params_check(['bookName'])
 def chapters():
     book_name = str(request.values.get('bookName'))
-    chapter = app.mongo.db.chapters
+    collections = app.mongo.db.chapters
 
-    results = chapter.find_one({'bookName': book_name}, {'_id': False})
+    results = collections.find_one({'bookName': book_name}, {'_id': False})
 
     if results is None:
         return {
@@ -65,13 +65,13 @@ def chapters():
     return {"message": "请求成功", "data": results}
 
 
-@blueprint.route('/contents', methods=['POST'])
+@blueprint.route('/contents', methods=['GET'])
 # @utils.token_required
 @utils.params_check(['bookName', 'chapterId'])
 def contents():
     book_name = str(request.values.get('bookName'))
     chapter_id = str(request.values.get('chapterId'))
-    collections = extensions.get_db().contents
+    collections = app.mongo.db.contents
 
     results = collections.find_one(
         {
@@ -79,4 +79,9 @@ def contents():
             'chapterId': chapter_id
         }, {'_id': False})
 
-    return {'msg': '请求成功', 'data': results}
+    if results is None:
+        return {
+            "message": "内容不存在"
+        }, utils.http_code["Not Found"]
+
+    return {"message": "请求成功", "data": results}
