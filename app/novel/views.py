@@ -48,17 +48,21 @@ def novels():
     }
 
 
-@blueprint.route('/chapters', methods=['POST'])
+@blueprint.route('/chapters', methods=['GET'])
 # @utils.token_required
 @utils.params_check(['bookName'])
 def chapters():
     book_name = str(request.values.get('bookName'))
-    collections = extensions.get_db().chapters
+    chapter = app.mongo.db.chapters
 
-    results = collections.find_one({'bookName': book_name}, {'_id': False})
-    # results_list = [x for x in results]
+    results = chapter.find_one({'bookName': book_name}, {'_id': False})
 
-    return {'msg': '请求成功', 'data': results}
+    if results is None:
+        return {
+            "message": "章节不存在"
+        }, utils.http_code["Not Found"]
+
+    return {"message": "请求成功", "data": results}
 
 
 @blueprint.route('/contents', methods=['POST'])
