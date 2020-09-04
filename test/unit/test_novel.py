@@ -26,3 +26,15 @@ def test_chapters(client, app):
 
     # 正确请求
     assert client.get("/novel/chapters?bookName=理想的女儿是世界最强，你也愿意宠爱吗？").status_code == http_code['OK']
+
+
+def test_contents(client, app):
+    # 缺少参数
+    assert client.get("/novel/contents").status_code == http_code['BadRequest']
+
+    # 错误参数
+    assert client.get("/novel/contents?bookName=理想的女儿是世界最强，你也愿意宠爱吗？").status_code == http_code['BadRequest']
+    assert client.get("/novel/contents?bookName=理想的女儿是世界最强，你也愿意宠爱吗？&&chapterId=554353").status_code == http_code['Not Found']
+
+    # 正确请求
+    assert client.get("/novel/contents?bookName=理想的女儿是世界最强，你也愿意宠爱吗？&&chapterId=70689337").status_code == http_code['OK']
