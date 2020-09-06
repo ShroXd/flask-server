@@ -32,3 +32,26 @@ def test_book_fetch(client, app):
     client.post("/mark/book", data={"bookName": "妹妹", "userId": "123456"})
     assert client.get("/mark/book?userId=123456").status_code == http_code["OK"]
     assert client.get("/mark/book?bookName=妹妹&&userId=123456").status_code == http_code["OK"]
+
+
+def test_reading_modify(client, app):
+
+    # 成功添加阅读记录
+    assert client.post("/mark/reading", data={"userId": "123456", "bookName": "妹妹", "chapterId": "7890"}).status_code == http_code["OK"]
+
+    # 不可重复收藏
+    assert client.post("/mark/reading", data={"userId": "123456", "bookName": "妹妹", "chapterId": "7890"}).status_code == http_code["Conflict"]
+
+    # 清理数据库
+    flaskapp.mongo.db.mark.drop()
+
+
+def test_reading_fetch(client, app):
+    # 成功获取阅读记录
+    flaskapp.mongo.db.mark.drop()
+    client.post("/mark/reading", data={"userId": "123456", "bookName": "妹妹", "chapterId": "7890"})
+    assert client.get("/mark/book?userId=123456").status_code == http_code["OK"]
+    assert client.get("/mark/book?bookName=妹妹&&userId=123456").status_code == http_code["OK"]
+
+    # 清理数据库
+    flaskapp.mongo.db.mark.drop()
