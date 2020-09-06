@@ -54,38 +54,28 @@ def book_del():
     return {"message": "已取消收藏"}
 
 
-@blueprint.route('/book/fetch', methods=['POST'])
-@utils.token_required
+@blueprint.route("/book", methods=["GET"])
+# @utils.token_required
 def book_fetch():
-    token_data = utils.verify_token(request.headers['Authorization'])
-    user_id = token_data['userId']
-    collections = extensions.get_db().collections
-    condition = {'userId': uuid.UUID(user_id)}
-    result = collections.find_one(condition)
+    # token_data = utils.verify_token(request.headers['Authorization'])
+    # user_id = token_data['userId']
+    user_id = request.values.get("userId")
+    book_name = request.values.get("bookName", "")
 
-    # 获取第一本书的图片
-    # TODO: 此处实现与前端页面的耦合严重，待修改
-    try:
-        firstBook = result['bookCollections'][0]
-    except IndexError:
-        return {'msg': '暂无数据'}
-    else:
-        books = extensions.get_db().books
-        condition = {'bookName': firstBook}
-        book = books.find_one(condition)
-        book_img = book['imageUrl']
-        book_des = book['bookSimpleDes']
+    collections = app.mongo.db.collections
+    condition = {"userId": user_id, "bookName": book_name} if book_name != "" else {"userId": user_id}
+    result = collections.find(condition, {'_id': False})
+    result = [x for x in result]
 
-        data = {
-            'bookCollections': result['bookCollections'],
-            'firstBookImg': book_img,
-            'firstBookDes': book_des
-        }
+    if len(result) == 0:
+        return {
+            "message": "暂无数据"
+        }, utils.http_code["Not Found"]
 
-    if result:
-        return {'msg': '请求成功', 'data': data}
-    else:
-        return {'msg': '暂无数据'}
+    return {
+        "message": "获取收藏成功",
+        "data": result
+    }
 
 
 @blueprint.route('/reading/modify', methods=['POST'])
