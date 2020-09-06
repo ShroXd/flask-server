@@ -2,40 +2,40 @@ import uuid
 
 from flask import (Blueprint, request)
 
-from app import extensions
+from app import app
 from app import utils
+from app import extensions
 
 blueprint = Blueprint('mark', __name__, url_prefix='/mark')
 
 
-@blueprint.route('/book/add', methods=['POST'])
-@utils.token_required
-@utils.params_check(['bookName'])
+@blueprint.route("/book", methods=["POST"])
+# @utils.token_required
+@utils.params_check(["userId", "bookName"])
 def book_add():
-    token_data = utils.verify_token(request.headers['Authorization'])
-    user_id = token_data['userId']
-    book_name = request.values.get('bookName')
-    collections = extensions.get_db().collections
-    condition = {'userId': uuid.UUID(user_id)}
+    # TODO: 修复前端登录后 user_id 解码 token
+    # token_data = utils.verify_token(request.headers['Authorization'])
+    # user_id = uuid.UUID(token_data['userId'])
+    user_id = request.values.get("userId")
+    book_name = request.values.get("bookName")
+
+    collections = app.mongo.db.collections
+    condition = {"userId": user_id, "bookName": book_name}
     result = collections.find_one(condition)
 
-    if not result:
-        collections.insert_one({
-            'userId': uuid.UUID(user_id),
-            'bookCollections': [book_name]
-        })
-    else:
-        # 如果被提交的书籍不存在于书籍收藏的数组里，那么将其添加进去
-        if len(
-                list(
-                    filter(lambda n: n == book_name,
-                           result['bookCollections']))) == 0:
-            result['bookCollections'].append(book_name)
-            collections.update(condition, result)
-        else:
-            return {'msg': '不可重复收藏'}
+    if result is not None:
+        return {
+            "message": "不可重复收藏"
+        }, utils.http_code["Conflict"]
 
-    return {'msg': '收藏成功'}
+    collections.insert_one({
+        "userId": user_id,
+        "bookName": book_name
+    })
+
+    return {
+        "message": "收藏成功",
+    }
 
 
 @blueprint.route('/book/del', methods=['POST'])
