@@ -1,8 +1,6 @@
 from app import app as flaskapp
-from app.utils import create_token
 from app.settings import TestConfig
 
-from flask import current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 user_complete_info = {
