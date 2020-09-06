@@ -13,3 +13,12 @@ def test_book_add(client, app):
 
     # 清理数据库
     flaskapp.mongo.db.collections.drop()
+
+
+def test_book_del(client, app):
+    # 缺少参数
+    assert client.delete("/mark/book").status_code == http_code["BadRequest"]
+
+    # 成功删除收藏
+    client.post("/mark/book", data={"bookName": "妹妹", "userId": "123456"})
+    assert client.delete("/mark/book", data={"bookName": "妹妹", "userId": "123456"}).status_code == http_code["OK"]
