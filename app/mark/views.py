@@ -38,22 +38,20 @@ def book_add():
     }
 
 
-@blueprint.route('/book/del', methods=['POST'])
-@utils.token_required
-@utils.params_check(['bookName'])
+@blueprint.route("/book", methods=["DELETE"])
+# @utils.token_required
+@utils.params_check(["bookName"])
 def book_del():
-    token_data = utils.verify_token(request.headers['Authorization'])
-    user_id = token_data['userId']
-    book_name = request.values.get('bookName')
-    collections = extensions.get_db().collections
-    condition = {'userId': uuid.UUID(user_id)}
-    result = collections.find_one(condition)
+    # token_data = utils.verify_token(request.headers['Authorization'])
+    # user_id = token_data['userId']
+    user_id = request.values.get("userId")
+    book_name = request.values.get("bookName")
 
-    result['bookCollections'] = list(
-        filter(lambda n: n != book_name, result['bookCollections']))
-    collections.update(condition, result)
+    collections = app.mongo.db.collections
+    condition = {"user_id": user_id, "bookName": book_name}
+    collections.delete_one(condition)
 
-    return {'msg': '删除成功'}
+    return {"message": "已取消收藏"}
 
 
 @blueprint.route('/book/fetch', methods=['POST'])
