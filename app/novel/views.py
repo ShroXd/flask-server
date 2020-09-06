@@ -12,6 +12,7 @@ blueprint = Blueprint('novel', __name__, url_prefix='/novel')
 @blueprint.route('/books', methods=['GET'])
 # @utils.token_required
 @utils.params_check(['listPage', 'listLimit'])
+# TODO 增加 id 查询
 def novels():
     book_name = str(request.args.get('bookName', ""))
     list_page = int(request.args.get('listPage', 0))
