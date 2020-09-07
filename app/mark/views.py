@@ -4,19 +4,16 @@ from flask import (Blueprint, request)
 
 from app import app
 from app import utils
-from app import extensions
 
 blueprint = Blueprint('mark', __name__, url_prefix='/mark')
 
 
 @blueprint.route("/book", methods=["POST"])
-# @utils.token_required
-@utils.params_check(["userId", "bookName"])
+@utils.token_required
+@utils.params_check(["bookName"])
 def book_add():
-    # TODO: 修复前端登录后 user_id 解码 token
-    # token_data = utils.verify_token(request.headers['Authorization'])
-    # user_id = uuid.UUID(token_data['userId'])
-    user_id = request.values.get("userId")
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = uuid.UUID(token_data['userId'])
     book_name = request.values.get("bookName")
 
     collections = app.mongo.db.collections
@@ -39,27 +36,25 @@ def book_add():
 
 
 @blueprint.route("/book", methods=["DELETE"])
-# @utils.token_required
+@utils.token_required
 @utils.params_check(["bookName"])
 def book_del():
-    # token_data = utils.verify_token(request.headers['Authorization'])
-    # user_id = token_data['userId']
-    user_id = request.values.get("userId")
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = uuid.UUID(token_data['userId'])
     book_name = request.values.get("bookName")
 
     collections = app.mongo.db.collections
-    condition = {"user_id": user_id, "bookName": book_name}
+    condition = {"userId": user_id, "bookName": book_name}
     collections.delete_one(condition)
 
     return {"message": "已取消收藏"}
 
 
 @blueprint.route("/book", methods=["GET"])
-# @utils.token_required
+@utils.token_required
 def book_fetch():
-    # token_data = utils.verify_token(request.headers['Authorization'])
-    # user_id = token_data['userId']
-    user_id = request.values.get("userId")
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = uuid.UUID(token_data['userId'])
     book_name = request.values.get("bookName", "")
 
     collections = app.mongo.db.collections
@@ -69,12 +64,11 @@ def book_fetch():
 
 
 @blueprint.route("/reading", methods=["POST"])
-# @utils.token_required
+@utils.token_required
 @utils.params_check(["bookName", "chapterId"])
 def reading_modify():
-    # token_data = utils.verify_token(request.headers['Authorization'])
-    # user_id = token_data['userId']
-    user_id = request.values.get("userId")
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = uuid.UUID(token_data['userId'])
     book_name = request.values.get('bookName')
     chapter_id = request.values.get('chapterId')
 
@@ -84,8 +78,13 @@ def reading_modify():
 
     if result is not None:
         return {
-            "message": "不可重复收藏"
+            "message": "不可重复记录阅读进度"
         }, utils.http_code["Conflict"]
+
+    collections.delete_one({
+        "userId": user_id,
+        "bookName": book_name,
+    })
 
     collections.insert_one({
         "userId": user_id,
@@ -94,17 +93,16 @@ def reading_modify():
     })
 
     return {
-        "message": "收藏成功"
+        "message": "已记录阅读进度"
     }
 
 
 @blueprint.route('/reading', methods=['GET'])
-# @utils.token_required
-# @utils.params_check(["bookName"])
+@utils.token_required
+@utils.params_check(["bookName"])
 def reading_fetch():
-    # token_data = utils.verify_token(request.headers['Authorization'])
-    # user_id = token_data['userId']
-    user_id = request.values.get("userId")
+    token_data = utils.verify_token(request.headers['Authorization'])
+    user_id = uuid.UUID(token_data['userId'])
     book_name = request.values.get("bookName", "")
 
     collections = app.mongo.db.mark

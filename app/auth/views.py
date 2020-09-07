@@ -31,7 +31,7 @@ def register():
 @utils.params_check(['username', 'password'])
 def login():
     username = request.form.get('username', None)
-    password = request.form.get('password', None)
+    password = utils.decrypt(request.form.get('password', None))
     users = app.mongo.db.users
     user = users.find_one({'username': username})
 
@@ -50,8 +50,7 @@ def login():
     return {
         'message': '登录成功',
         'data': {
-            'token': token,
-            'user_id': user_id
+            'token': token
         }
     }
 

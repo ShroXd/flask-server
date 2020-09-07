@@ -1,8 +1,11 @@
+import base64
 import functools
+import pyDes
 
 from flask import request, jsonify, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.settings import DevelopmentConfig
+from app.settings import PASSWORD_KEY
 
 # http code 对照表
 http_code = {
@@ -68,3 +71,13 @@ def params_check(params_list):
         return check
 
     return decotate
+
+
+# 解密密码
+
+def decrypt(text):
+
+    crypto = pyDes.triple_des(PASSWORD_KEY, padmode=pyDes.PAD_PKCS5)
+    x = base64.standard_b64decode(text.encode())
+    x = crypto.decrypt(x)
+    return x.decode()
