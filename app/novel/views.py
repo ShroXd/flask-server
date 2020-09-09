@@ -9,7 +9,7 @@ blueprint = Blueprint('novel', __name__, url_prefix='/novel')
 
 
 @blueprint.route('/books', methods=['GET'])
-@utils.token_required
+# @utils.token_required
 @utils.params_check(['listPage', 'listLimit'])
 def novels():
     book_name = str(request.args.get('bookName', ""))
@@ -54,7 +54,7 @@ def novels():
 
 
 @blueprint.route('/chapters', methods=['GET'])
-@utils.token_required
+# @utils.token_required
 @utils.params_check(['bookName'])
 def chapters():
     book_name = str(request.values.get('bookName'))
@@ -62,6 +62,7 @@ def chapters():
 
     results = collections.find_one({'bookName': book_name}, {'_id': False})
 
+    # TODO 字段命名需规范
     if results is None:
         return {
             "message": "章节不存在"
@@ -71,7 +72,7 @@ def chapters():
 
 
 @blueprint.route('/contents', methods=['GET'])
-@utils.token_required
+# @utils.token_required
 @utils.params_check(['bookName', 'chapterId'])
 def contents():
     book_name = str(request.values.get('bookName'))
