@@ -1,7 +1,5 @@
-export FLASK_APP=run.py
-export FLASK_DEBUG=1
-
 # 喵内
+[![GitHub license](https://img.shields.io/github/license/AlexeyVoronov96/NewsApp-With-SwiftUI-And-Combine.svg)](https://github.com/AlexeyVoronov96/NewsApp-With-SwiftUI-And-Combine/blob/master/LICENSE)
 
 此项目是使用 Flask 构建的 RESTful api 应用。<br/>
 在读完《流畅的 Python》之后想要做点什么东西，所以就有了这个项目<br/>
