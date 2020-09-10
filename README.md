@@ -11,15 +11,11 @@ export FLASK_DEBUG=1
 ## 运行
 
 ``` bash
-# install dependencies
-pip install -r requirements.txt
+# build image
+docker build -t novelser:latest .
 
-# configuration
-export FLASK_APP=run.py
-export FLASK_DEBUG=1
-
-# run app
-flask run
+# run docker
+docker run -p 3000:5000 --name novelser -d novelser
 ```
 
 ## 已完成
