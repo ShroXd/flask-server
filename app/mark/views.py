@@ -59,7 +59,7 @@ def book_fetch():
 
     collections = app.mongo.db.collections
     condition = {"userId": user_id, "bookName": book_name} if book_name != "" else {"userId": user_id}
-    result = collections.find(condition, {'_id': False})
+    result = collections.find(condition, {'_id': False, 'userId': False})
     return fetch_data(result)
 
 
@@ -99,16 +99,16 @@ def reading_modify():
 
 @blueprint.route('/reading', methods=['GET'])
 @utils.token_required
-@utils.params_check(["bookName"])
 def reading_fetch():
     token_data = utils.verify_token(request.headers['Authorization'])
-    user_id = uuid.UUID(token_data['userId'])
+    user_id = uuid.UUID(token_data["userId"])
     book_name = request.values.get("bookName", "")
 
     collections = app.mongo.db.mark
     condition = {'userId': user_id, 'bookName': book_name} if book_name != "" else {'userId': user_id}
     result = collections.find(condition, {'_id': False})
-    return fetch_data(result)
+    result = [x for x in result]
+    return fetch_data(result[::-1])
 
 
 def fetch_data(result):
